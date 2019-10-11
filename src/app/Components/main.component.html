@@ -1,0 +1,49 @@
+<div class="main">
+	<div class="main-form" >
+		<div class="gen-header">
+	<div class="gen-btn">
+       <label  class="mat-custom-btn"  style="padding-top:10px">click to upload
+            <i for="excel-upload"></i>
+            <input type="file" id='excel-upload' accept=".xlsx" multiple="false"
+              (change)="inputExcelOnClick($event)" />
+          </label>
+    </div>
+    </div>
+   <div style="height:50px"></div>
+     <mat-tab-group (selectedTabChange)="loadSheetOnTabClick($event)" class="gen-change-type" *ngIf="(!isEmptyDrop && isExcelDrop)">
+  <mat-tab label="{{name}}"  *ngFor="let name of excel.sheetNameForTab; let i = index" (click)="loadSheetOnTabClick(i)">     
+      </mat-tab>
+</mat-tab-group>
+    <div class="gen-drop">
+      <div class="dropzone" *ngIf="isEmptyDrop" appDragDrop (filesChangeEmiter)="dropExcelOnChance($event)"
+        (filesInvalidEmiter)="dropExcelBlock($event)"
+        [allowed_extensions]="['xlsx','xls',  'xlsm','xltx','xltm','xlsb','xlam']">
+        <div class="text-wrapper">
+          <div class="centered">DRAG & DROP</div>
+          <div class="centered-sub">Excel format.</div>
+        </div>
+      </div>
+      <div class="display-sheet-js" [hidden]="!(!isEmptyDrop && isExcelDrop)">
+        <div class="example-container">
+            <table cdk-table [dataSource]="excel.excelDataEncodeToJson">
+              <tr cdk-header-row *cdkHeaderRowDef="excel.excelTransformNum; sticky: true"></tr>
+              <tr cdk-row *cdkRowDef="let row ; columns: excel.excelTransformNum;"></tr>
+              <ng-container cdkColumnDef="order" sticky>
+                <th cdk-header-cell *cdkHeaderCellDef> {{sheetMaxRow}} </th>
+                <td cdk-cell *cdkCellDef="let element; let idx = index"> {{idx}} </td>
+              </ng-container>
+              <ng-container *ngFor="let disCol of excel.excelTransformNum | slice:1 ;let colIndex = index ;"
+                cdkColumnDef="{{disCol}}">
+                <th cdk-header-cell *cdkHeaderCellDef> {{disCol}} </th>
+                <td cdk-cell *cdkCellDef="let element"> {{ element[disCol]}} </td>
+              </ng-container>
+            </table>
+        </div>
+      </div>
+      <div class="display-pdf" [hidden]="!(!isEmptyDrop && !isExcelDrop)">
+          <pdf-viewer [src]="pdfSrc" [render-text]="true" [original-size]="true">
+          </pdf-viewer>
+      </div>
+    </div>  
+  </div>
+</div>
